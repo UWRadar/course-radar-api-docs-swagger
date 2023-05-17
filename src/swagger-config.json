@@ -1,0 +1,147 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "0.0.1",
+    "title": "UWClassmate API Documentation",
+    "description": "API documentation for the UWClassmate Website"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Local Next.js server"
+    },
+    {
+      "url": "https://test.uwclassmate.com/api",
+      "description": "Test server"
+    },
+    {
+      "url": "https://api.uwclassmate.com/api",
+      "description": "Old backenl production server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Email login",
+        "description": "User login with email and password",
+        "operationId": "loginUser",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "description": "User login email and password hash",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "User email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "User password hash"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "login successful",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Set user session cookie",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Success status"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid email or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Success status",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Error name",
+                      "enum": [
+                        "userNotExist",
+                        "thirdPartyLoginRequired",
+                        "passwordIncorrect"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error message",
+                      "enum": [
+                        "User does not exist",
+                        "Password not set. Please log in using third party.",
+                        "Wrong password"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
